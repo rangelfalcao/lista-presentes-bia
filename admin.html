@@ -244,11 +244,55 @@
     /* Empty state */
     .empty { text-align: center; padding: 48px 24px; color: var(--muted); font-size: .9rem; }
 
-    @media (max-width: 600px) {
+    @media (max-width: 640px) {
       .stats-row { grid-template-columns: 1fr 1fr; }
       .stats-row .stat-card:last-child { grid-column: span 2; }
-      th:nth-child(1), td:nth-child(1) { display: none; } /* esconde coluna img */
       .login-box { padding: 36px 24px; }
+
+      /* Esconde tabela e mostra cards */
+      .table-wrap { background: transparent; box-shadow: none; border-radius: 0; }
+      table, thead, tbody, th, td, tr { display: block; }
+      thead { display: none; }
+
+      tr {
+        background: #fff;
+        border-radius: 14px;
+        margin-bottom: 10px;
+        padding: 14px 16px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        border-top: none !important;
+      }
+      tr:hover td { background: transparent; }
+
+      /* Coluna imagem: pequena, à esquerda */
+      td:nth-child(1) {
+        width: auto; flex-shrink: 0;
+        padding: 0;
+      }
+      td:nth-child(1) img { width: 52px; height: 52px; border-radius: 10px; }
+
+      /* Nome + categoria: ocupa o restante da linha */
+      td:nth-child(2) {
+        flex: 1; min-width: 0;
+        padding: 0;
+        border: none;
+      }
+
+      /* Badge status: linha própria */
+      td:nth-child(3) { padding: 0; border: none; width: 100%; }
+
+      /* Quem reservou: linha própria */
+      td:nth-child(4) { padding: 0; border: none; width: 100%; }
+
+      /* Botão cancelar: linha própria, largura total */
+      td:nth-child(5) {
+        padding: 0; border: none; width: 100%;
+      }
+      .btn-unreserve { width: 100%; text-align: center; padding: 10px; }
     }
   </style>
 </head>
