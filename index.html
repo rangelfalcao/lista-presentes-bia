@@ -275,36 +275,14 @@
       width: 100%; aspect-ratio: 1/1;
       background: var(--beige);
       overflow: hidden; flex-shrink: 0;
-      position: relative;
     }
     .card-img {
-      position: absolute; inset: 0;
       width: 100%; height: 100%;
       object-fit: cover;
-      opacity: 0; transition: opacity .4s, transform .4s;
+      transition: transform .4s;
+      display: block;
     }
-    .card-img.loaded { opacity: 1; }
-    .card:hover .card-img.loaded { transform: scale(1.05); }
-
-    .card-placeholder {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      background: linear-gradient(135deg, var(--beige) 0%, #E4D9C5 100%);
-      gap: 6px;
-    }
-    .card-placeholder span { font-size: 2.8rem; }
-
-    .shimmer {
-      position: absolute; inset: 0;
-      background: linear-gradient(90deg, var(--beige) 25%, #E4D9C5 50%, var(--beige) 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.6s infinite;
-    }
-    @keyframes shimmer {
-      0%   { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
+    .card:hover .card-img { transform: scale(1.05); }
 
     /* Body */
     .card-body {
@@ -601,199 +579,185 @@ const CATS = [
 const PRODUCTS = [
 
   // ── Acessórios ────────────────────────────────
-  { id:'relogio-casio',   cat:'acessorios', emoji:'⌚',
+  { id:'relogio-casio',   cat:'acessorios', img:'imgs/relogio-casio.png',
     name:'Relógio Casio Feminino LA670WA',
     desc:'Mini retrô · Cronômetro · Alarme · Preto/Prata',
-    url:'https://www.mercadolivre.com.br/relogio-casio-feminino-antiguo-la670wa-1df-mini-retr-crono-alarme/p/MLB25748751',
-    mlId:'MLB25748751' },
+    url:'https://www.mercadolivre.com.br/relogio-casio-feminino-antiguo-la670wa-1df-mini-retr-crono-alarme/p/MLB25748751' },
 
-  { id:'mochila-nike',    cat:'acessorios', emoji:'🎒',
+  { id:'mochila-nike',    cat:'acessorios', img:'imgs/mochila-nike.png',
     name:'Mochila Nike Heritage Unissex',
     desc:'Cor marrom · Estilo casual e esportivo',
     url:'https://www.nike.com.br/mochila-nike-heritage-unissex-097851.html?cor=ND' },
 
-  { id:'bolsa-nike-tote', cat:'acessorios', emoji:'👜',
+  { id:'bolsa-nike-tote', cat:'acessorios', img:'imgs/bolsa-nike-tote.png',
     name:'Bolsa Nike Heritage Tote 2.0 Unissex',
     desc:'Sacola esportiva · Espaçosa e casual',
     url:'https://www.authenticfeet.com.br/bolsa-nike-heritage-t-2-0-unissex-fz132-0-120/p' },
 
   // ── Beleza ────────────────────────────────────
-  { id:'paleta-oceane',   cat:'beleza', emoji:'💄',
+  { id:'paleta-oceane',   cat:'beleza', img:'imgs/paleta-oceane.png',
     name:'Paleta de Sombras Océane 24.1 Cores · 28g',
     desc:'24 cores · 28g · Alta pigmentação',
     url:'https://www.oceane.com.br/paleta-de-sombras-241-cores---24-eyeshadow-pallete-28g-ap2000865cuni/p?idsku=20295' },
 
   // ── Panelas & Frigideiras ──────────────────────
-  { id:'cacarola-24',     cat:'panelas', emoji:'🍲',
+  { id:'cacarola-24',     cat:'panelas', img:'imgs/cacarola-24.png',
     name:'Caçarola Tramontina LYF Antiaderente Verde · 24cm',
     desc:'Alumínio · Starflon Max · Verde · 24cm',
     url:'https://www.tramontina.com.br/cacarola-tramontina-lyf-em-aluminio-com-revestimento-interno-e-externo-em-antiaderente-starflon-max-verde-24-cm/28318224.html' },
 
-  { id:'cacarola-20',     cat:'panelas', emoji:'🍲',
+  { id:'cacarola-20',     cat:'panelas', img:'imgs/cacarola-20.png',
     name:'Caçarola Tramontina LYF Verde Natureza · 20cm · 2,9L',
     desc:'Alumínio · Starflon Max · Verde Natureza · 2,9L',
     url:'https://www.tramontina.com.br/cacarola-tramontina-lyf-em-aluminio-com-revestimento-interno-e-externo-em-antiaderente-starflon-max-verde-natureza-20-cm-2-9-l/28318220.html' },
 
-  { id:'panela-18',       cat:'panelas', emoji:'🫕',
+  { id:'panela-18',       cat:'panelas', img:'imgs/panela-18.png',
     name:'Panela Tramontina LYF Verde Natureza · 18cm · 2,1L',
     desc:'Alumínio · Starflon Max · Verde Natureza · 2,1L',
     url:'https://www.tramontina.com.br/panela-tramontina-lyf-em-aluminio-com-revestimento-interno-e-externo-em-antiaderente-starflon-max-verde-natureza-18-cm-2-1-l/28319218.html' },
 
-  { id:'frig-reta-24',    cat:'panelas', emoji:'🍳',
+  { id:'frig-reta-24',    cat:'panelas', img:'imgs/frig-reta-24.png',
     name:'Frigideira Reta Tramontina LYF Verde · 24cm',
     desc:'Alumínio · Starflon Max · Verde · Reta · 24cm',
     url:'https://www.tramontina.com.br/frigideira-reta-tramontina-lyf-em-aluminio-com-revestimento-interno-e-externo-em-antiaderente-starflon-max-verde-24-cm/28317224.html' },
 
-  { id:'frig-28',         cat:'panelas', emoji:'🍳',
+  { id:'frig-28',         cat:'panelas', img:'imgs/frig-28.png',
     name:'Frigideira Tramontina LYF Verde · 28cm',
     desc:'Alumínio · Starflon Max · Verde · 28cm',
     url:'https://www.tramontina.com.br/frigideira-tramontina-lyf-em-aluminio-com-revestimento-interno-e-externo-em-antiaderente-starflon-max-verde-28-cm/28316228.html' },
 
-  { id:'frig-24',         cat:'panelas', emoji:'🍳',
+  { id:'frig-24',         cat:'panelas', img:'imgs/frig-24.png',
     name:'Frigideira Tramontina LYF Verde · 24cm',
     desc:'Alumínio · Starflon Max · Verde · 24cm',
     url:'https://www.tramontina.com.br/frigideira-tramontina-lyf-em-aluminio-com-revestimento-interno-e-externo-em-antiaderente-starflon-max-verde-24-cm/28316224.html' },
 
   // ── Utensílios ────────────────────────────────
-  { id:'cuscuzeira',      cat:'utensilios', emoji:'🫕',
+  { id:'cuscuzeira',      cat:'utensilios', img:'imgs/cuscuzeira.png',
     name:'Cuscuzeira Tramontina Turim · 16cm · Chumbo · 1,8L',
     desc:'Cozi · Turim · 16cm · Chumbo · 1,8 litros',
-    url:'https://www.mercadolivre.com.br/cuscuzeira-cozi-tramontina-turim-16cm-chumbo-18l/p/MLB20643392',
-    mlId:'MLB20643392' },
+    url:'https://www.mercadolivre.com.br/cuscuzeira-cozi-tramontina-turim-16cm-chumbo-18l/p/MLB20643392' },
 
-  { id:'assadeiras',      cat:'utensilios', emoji:'🥧',
+  { id:'assadeiras',      cat:'utensilios', img:'imgs/assadeiras.png',
     name:'Jogo Assadeiras Tramontina Brasil Rosa · 2 Peças',
     desc:'Alumínio antiaderente Starflon Max · Rosa · 2 peças',
     url:'https://www.tramontina.com.br/jogo-de-assadeiras-tramontina-brasil-em-aluminio-com-revestimento-interno-e-externo-em-antiaderente-starflon-max-rosa-02-pecas/20099486.html' },
 
-  { id:'kit-utensilios',  cat:'utensilios', emoji:'🥄',
+  { id:'kit-utensilios',  cat:'utensilios', img:'imgs/kit-utensilios.png',
     name:'Kit 10 Utensílios de Silicone · Cozinha',
     desc:'Espátula, concha e mais · Silicone · Kit com 10 peças',
-    url:'https://produto.mercadolivre.com.br/MLB-3888910673-kit-10-utensilios-conjunto-cozinha-espatula-concha-silicone-_JM',
-    mlId:'MLB3888910673' },
+    url:'https://produto.mercadolivre.com.br/MLB-3888910673-kit-10-utensilios-conjunto-cozinha-espatula-concha-silicone-_JM' },
 
-  { id:'faqueiro-laguna', cat:'utensilios', emoji:'🍴',
+  { id:'faqueiro-laguna', cat:'utensilios', img:'imgs/faqueiro-laguna.png',
     name:'Faqueiro Tramontina Laguna Inox · 16 Peças',
     desc:'Com facas para churrasco · Aço inox · Brilho · (opção A)',
     url:'https://www.tramontina.com.br/faqueiro-tramontina-laguna-em-aco-inox-com-facas-para-churrasco-acabamento-em-brilho-16-pecas/66906420.html',
     optLabel:'Opção A' },
 
-  { id:'facas-felice',    cat:'utensilios', emoji:'🔪',
+  { id:'facas-felice',    cat:'utensilios', img:'imgs/facas-felice.jpeg',
     name:'Jogo de Facas Tramontina Felice Inox · 5 Peças',
     desc:'Cabo preto · Aço inox · 5 peças · (opção B)',
     url:'https://www.tramontina.com.br/jogo-de-facas-tramontina-felice-com-laminas-de-aco-inox-e-cabos-em-polipropileno-preto-5-pecas/23499078.html',
     optLabel:'Opção B' },
 
   // ── Copos, Xícaras & Bebidas ──────────────────
-  { id:'copos-ambar',     cat:'copos', emoji:'🥃',
+  { id:'copos-ambar',     cat:'copos', img:'imgs/copos-ambar.png',
     name:'Kit 8 Copos Vidro Âmbar Canelado Long Drink · 450ml',
     desc:'Versalhes · Âmbar · Canelado · 450ml · Kit c/ 8',
-    url:'https://www.mercadolivre.com.br/kit-8-copo-vidro-versalhes-ambar-canelado-long-drink-450ml/up/MLBU3707952663',
-    mlId:'MLBU3707952663' },
+    url:'https://www.mercadolivre.com.br/kit-8-copo-vidro-versalhes-ambar-canelado-long-drink-450ml/up/MLBU3707952663' },
 
-  { id:'xicaras-cha',     cat:'copos', emoji:'☕',
+  { id:'xicaras-cha',     cat:'copos', img:'imgs/xicaras-cha.png',
     name:'Conjunto 6 Xícaras de Chá de Vidro com Pires · 200ml',
     desc:'Pétala · Cristal âmbar · 200ml · 6 unid. com pires',
-    url:'https://www.mercadolivre.com.br/jogo-6-xicaras-200ml-para-cha-cristal-oxford-ambar-ke-home/up/MLBU4126996414',
-    mlId:'MLBU4126996414' },
+    url:'https://www.mercadolivre.com.br/jogo-6-xicaras-200ml-para-cha-cristal-oxford-ambar-ke-home/up/MLBU4126996414' },
 
-  { id:'bule-termico',    cat:'copos', emoji:'🫖',
+  { id:'bule-termico',    cat:'copos', img:'imgs/bule-termico.png',
     name:'Bule Térmico Tramontina Exata Mocha · 1L',
     desc:'Tramontina Exata · Ampola de vidro · Mocha · 1 litro',
     url:'https://www.tramontina.com.br/bule-termico-tramontina-exata-em-plastico-mocha-com-ampola-de-vidro-1-l/61636225.html' },
 
   // ── Mesa Posta & Organização ──────────────────
-  { id:'jogo-americano',  cat:'mesa', emoji:'🪴',
+  { id:'jogo-americano',  cat:'mesa', img:'imgs/jogo-americano.png',
     name:'Jogo Americano 6 Peças Redondo Ondulado · Bege',
     desc:'Ondas redondo · Premium · 6 peças · Bege',
-    url:'https://produto.mercadolivre.com.br/MLB-4013675019-jogo-americano-6-pecas-ondas-redondo-ondulado-premium-luxo-_JM',
-    mlId:'MLB4013675019' },
+    url:'https://produto.mercadolivre.com.br/MLB-4013675019-jogo-americano-6-pecas-ondas-redondo-ondulado-premium-luxo-_JM' },
 
-  { id:'porta-talheres',  cat:'mesa', emoji:'🥢',
+  { id:'porta-talheres',  cat:'mesa', img:'imgs/porta-talheres.png',
     name:'Porta Talheres Organizador de Mesa · Madeira e Vidro',
     desc:'Madeira e vidro · Organizador de bancada',
-    url:'https://www.mercadolivre.com.br/up/MLBU3475612444',
-    mlId:'MLBU3475612444' },
+    url:'https://www.mercadolivre.com.br/up/MLBU3475612444' },
 
-  { id:'porta-guardanapo', cat:'mesa', emoji:'🧻',
+  { id:'porta-guardanapo', cat:'mesa', img:'imgs/porta-guardanapo.png',
     name:'Porta Guardanapo Bambu com Peso',
     desc:'Bambu · Com peso · Para mesa e cantinho do café',
-    url:'https://www.mercadolivre.com.br/porta-guardanapo-bambu-com-peso-papel-mesa-cantinho-do-cafe/p/MLB28114762',
-    mlId:'MLB28114762' },
+    url:'https://www.mercadolivre.com.br/porta-guardanapo-bambu-com-peso-papel-mesa-cantinho-do-cafe/p/MLB28114762' },
 
-  { id:'pote-bambu',      cat:'mesa', emoji:'🪵',
+  { id:'pote-bambu',      cat:'mesa', img:'imgs/pote-bambu.png',
     name:'Pote Multiuso Bambu com Colher Classic · 19,5cm',
     desc:'Riachuelo · Bambu · 19,5×15×9,8cm · Bege',
     url:'https://www.riachuelo.com.br/pote-multiuso-de-bambu-com-colher-classic-19-5x15x9-8cm-bege-casa-riachuelo-15235491001_sku_sku?sku=15235491001' },
 
-  { id:'acucareiro-meleira', cat:'mesa', emoji:'🍯',
+  { id:'acucareiro-meleira', cat:'mesa', img:'imgs/acucareiro-meleira.png',
     name:'Conjunto Açucareiro + Meleira de Vidro',
-    desc:'Vidro · Com colher e dosador · Par completo',
-    url:'https://www.mercadolivre.com.br/conjunto-acucareiro--meleira-de-vidro-com-colher-e-dosador/up/MLBU3932616959',
-    mlId:'MLBU3932616959' },
+    desc:'Vidro âmbar · Com colher e dosador · Par completo',
+    url:'https://www.mercadolivre.com.br/conjunto-acucareiro--meleira-de-vidro-com-colher-e-dosador/up/MLBU3932616959' },
 
-  { id:'moedor-sal-pimenta', cat:'mesa', emoji:'🧂',
+  { id:'moedor-sal-pimenta', cat:'mesa', img:'imgs/moedor-sal-pimenta.png',
     name:'Conjunto Moedor de Sal e Pimenta Madeira · 19,5cm',
     desc:'Oxford Porcelanas · Madeira · 19,5cm · Par',
     url:'https://www.oxfordporcelanas.com.br/moedor-de-sal-pimenta-em-madeira-19-5-cm/p' },
 
   // ── Temperos & Despensa ───────────────────────
-  { id:'org-temperos',    cat:'temperos', emoji:'🫙',
+  { id:'org-temperos',    cat:'temperos', img:'imgs/org-temperos.png',
     name:'Organizador de Temperos OU · 9 Peças · Linha Clear',
     desc:'OU · Linha Clear · 9 peças · Branco natural',
     url:'https://www.amazon.com.br/Organizador-Temperos-Clear-OU-Natural/dp/B0BYKWGXPC' },
 
-  { id:'potes-hermeticos', cat:'temperos', emoji:'🫙',
+  { id:'potes-hermeticos', cat:'temperos', img:'imgs/potes-hermeticos.png',
     name:'Kit 12 Potes Herméticos Porta Mantimentos · Transparente',
     desc:'Quadrado · Transparente · Kit com 12 · Cozinha',
-    url:'https://www.mercadolivre.com.br/kit-12-potes-hermeticos-porta-mantimentos-quadrado-cozinha-cor-transparente/p/MLB59182671',
-    mlId:'MLB59182671' },
+    url:'https://www.mercadolivre.com.br/kit-12-potes-hermeticos-porta-mantimentos-quadrado-cozinha-cor-transparente/p/MLB59182671' },
 
-  { id:'potes-electrolux', cat:'temperos', emoji:'📦',
+  { id:'potes-electrolux', cat:'temperos', img:'imgs/potes-electrolux.png',
     name:'Potes Herméticos Electrolux · Branco · 10 Unidades',
     desc:'Electrolux · Plástico branco · Retangular · 10 unid.',
-    url:'https://www.mercadolivre.com.br/potes-hermeticos-electrolux-de-plastico-branco-retangular-com-10-unidades/p/MLB23194311',
-    mlId:'MLB23194311' },
+    url:'https://www.mercadolivre.com.br/potes-hermeticos-electrolux-de-plastico-branco-retangular-com-10-unidades/p/MLB23194311' },
 
   // ── Adega & Vinho ─────────────────────────────
-  { id:'abridor-vinho',   cat:'adega', emoji:'🍷',
+  { id:'abridor-vinho',   cat:'adega', img:'imgs/abridor-vinho.png',
     name:'Abridor de Vinho Elétrico Automático Electrolux',
     desc:'Electrolux · Elétrico automático · Com corta lacres',
     url:'https://site.fastshop.com.br/abridor-de-vinho-electrolux-eletrico-automatico-com-corta-lacres-60861/p?idsku=63963' },
 
   // ── Banheiro ──────────────────────────────────
-  { id:'toalhas-karsten-floral', cat:'banheiro', emoji:'🛁',
+  { id:'toalhas-karsten-floral', cat:'banheiro', img:'imgs/toalhas-karsten-floral.png',
     name:'Jogo Toalhas Karsten Floral · 100% Algodão · 4 Peças',
     desc:'Karsten · Floral · Verde/Platina · 4 peças · (opção A)',
     url:'https://produto.mercadolivre.com.br/MLB-4091845807-jogo-de-toalhas-karsten-100-algodo-floral-grossa-4-pecas-_JM',
-    mlId:'MLB4091845807',
     optLabel:'Opção A' },
 
-  { id:'toalhas-buddemeyer', cat:'banheiro', emoji:'🛁',
+  { id:'toalhas-buddemeyer', cat:'banheiro', img:'imgs/toalhas-buddemeyer.png',
     name:'Jogo Toalhas Buddemeyer Atena Fio Penteado · Cinza · 4 Peças',
     desc:'Buddemeyer Atena · Fio penteado · Cinza · 4 peças · (opção B)',
     url:'https://www.mercadolivre.com.br/jogo-de-toalhas-buddemeyer-atena-fio-penteado-banho-cinzacinza-claro-4-pecas/p/MLB51334657',
-    mlId:'MLB51334657',
     optLabel:'Opção B' },
 
-  { id:'toalha-nuvia',    cat:'banheiro', emoji:'🛁',
+  { id:'toalha-nuvia',    cat:'banheiro', img:'imgs/toalha-nuvia.png',
     name:'Toalha Banhão Gigante Karsten Nuvia · 86×150cm · Cobalto',
     desc:'Karsten Nuvia · 100% algodão · Fio penteado · 86×150cm',
-    url:'https://www.mercadolivre.com.br/toalha-banho-gigante-karsten-nuvia-100-algodo-macia-grossa-luxo-fio-penteado-tecnologia-aera-max-86x150cm-cor-cobalto-lisa/p/MLB69121133',
-    mlId:'MLB69121133' },
+    url:'https://www.mercadolivre.com.br/toalha-banho-gigante-karsten-nuvia-100-algodo-macia-grossa-luxo-fio-penteado-tecnologia-aera-max-86x150cm-cor-cobalto-lisa/p/MLB69121133' },
 
-  { id:'porta-sabonete',  cat:'banheiro', emoji:'🧴',
+  { id:'porta-sabonete',  cat:'banheiro', img:'imgs/porta-sabonete.png',
     name:'Porta Sabonete Líquido 240ml · Resina Verde Celadon',
     desc:'Sensea · Dino · Resina · Verde celadon · 240ml',
     url:'https://www.leroymerlin.com.br/porta-sabonete-liquido-de-bancada-para-banheiro-240ml-resina-verde-celadon-dino-sensea_92318940' },
 
   // ── Lavanderia ────────────────────────────────
-  { id:'kit-lavanderia',  cat:'lavanderia', emoji:'🧺',
+  { id:'kit-lavanderia',  cat:'lavanderia', img:'imgs/kit-lavanderia.png',
     name:'Kit Lavanderia OU · 4 Peças · Linha Flow · Bege',
     desc:'OU · Linha Flow · 4 peças · Bege',
     url:'https://www.ou.com.br/products/kit-de-lavanderia-ou-4-pecas-linha-flow?variant=46536204157149' },
 
-  { id:'kit-dispenser',   cat:'lavanderia', emoji:'🧴',
+  { id:'kit-dispenser',   cat:'lavanderia', img:'imgs/kit-dispenser.png',
     name:'Kit Dispenser OU · 3 Peças · Linha Flow · Bege',
     desc:'OU · Linha Flow · 3 peças · Bege',
     url:'https://www.ou.com.br/products/kit-dispenser-ou-linha-flow-3-pecas?variant=46840564056285' },
@@ -805,7 +769,6 @@ const PRODUCTS = [
 let db = null;
 let reservations = {};
 let pendingId = null;
-let imgCache = {};
 const USE_FB = FIREBASE_CONFIG.apiKey !== 'COLE_AQUI';
 
 // ─── Init ─────────────────────────────────────────
@@ -873,8 +836,6 @@ function renderAll() {
   ls.classList.add('hide');
   setTimeout(() => ls.remove(), 600);
 
-  // Lazy-load images
-  observeImages();
 }
 
 // ─── Card HTML ────────────────────────────────────
@@ -888,16 +849,7 @@ function makeCard(p) {
     ${res ? '<span class="badge-reserved">Reservado ✓</span>' : ''}
     ${p.optLabel ? `<span class="badge-opt">${p.optLabel}</span>` : ''}
     <div class="card-img-wrap">
-      <div class="shimmer" id="shimmer-${p.id}"></div>
-      <div class="card-placeholder" id="ph-${p.id}">
-        <span>${p.emoji}</span>
-      </div>
-      <img class="card-img"
-        id="img-${p.id}"
-        data-ml="${p.mlId || ''}"
-        data-src="${p.url || ''}"
-        alt="${p.name}"
-      >
+      <img class="card-img" src="${p.img}" alt="${p.name}" loading="lazy">
     </div>
     <div class="card-body">
       <div class="card-name">${p.name}</div>
@@ -921,92 +873,6 @@ function esc(s) {
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-// ═══════════════════════════════════════════════════
-//  IMAGE LOADING
-// ═══════════════════════════════════════════════════
-function observeImages() {
-  const imgs = document.querySelectorAll('.card-img[data-ml], .card-img[data-src]');
-  if (!('IntersectionObserver' in window)) { imgs.forEach(loadImg); return; }
-
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { loadImg(e.target); obs.unobserve(e.target); }
-    });
-  }, { rootMargin: '240px' });
-
-  imgs.forEach(i => obs.observe(i));
-}
-
-async function loadImg(imgEl) {
-  const mlId  = imgEl.dataset.ml;
-  const pgUrl = imgEl.dataset.src;
-  const pid   = imgEl.id.replace('img-', '');
-
-  // Already in cache?
-  const cacheKey = mlId || pgUrl;
-  if (imgCache[cacheKey]) { applyImg(imgEl, imgCache[cacheKey], pid); return; }
-
-  try {
-    let url = null;
-
-    if (mlId) {
-      // Use ML API
-      const endpoint = mlId.startsWith('MLBU')
-        ? `https://api.mercadolibre.com/products/${mlId}`
-        : `https://api.mercadolibre.com/items/${mlId}`;
-
-      const r = await timedFetch(endpoint, 7000);
-      if (r.ok) {
-        const d = await r.json();
-        // For items: pictures[0].url || thumbnail
-        // For products: pictures[0].url
-        url = (d.pictures && d.pictures[0] && d.pictures[0].url)
-           || d.thumbnail
-           || null;
-        if (url) url = url.replace(/-[A-Z]\.jpg$/, '-O.jpg'); // high-res
-      }
-    }
-
-    if (!url && pgUrl) {
-      // Fetch OG image via CORS proxy
-      const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(pgUrl)}`;
-      const r = await timedFetch(proxy, 9000);
-      if (r.ok) {
-        const d  = await r.json();
-        const m  = (d.contents || '').match(
-          /<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i
-        ) || (d.contents || '').match(
-          /<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i
-        );
-        if (m) url = m[1].replace(/&amp;/g,'&');
-      }
-    }
-
-    if (url) { imgCache[cacheKey] = url; applyImg(imgEl, url, pid); }
-    else      { clearShimmer(pid); }
-
-  } catch { clearShimmer(pid); }
-}
-
-function applyImg(imgEl, url, pid) {
-  imgEl.onload  = () => {
-    imgEl.classList.add('loaded');
-    clearShimmer(pid);
-    document.getElementById(`ph-${pid}`)?.remove();
-  };
-  imgEl.onerror = () => clearShimmer(pid);
-  imgEl.src = url;
-}
-
-function clearShimmer(pid) {
-  document.getElementById(`shimmer-${pid}`)?.remove();
-}
-
-function timedFetch(url, ms) {
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), ms);
-  return fetch(url, { signal: ctrl.signal }).finally(() => clearTimeout(t));
-}
 
 // ═══════════════════════════════════════════════════
 //  MODAL / RESERVA
