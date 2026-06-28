@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Lista da Bia</title>
+  <meta name="robots" content="noindex,nofollow">
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --olive:      #3A4A25;
+      --olive-mid:  #5A6B3A;
+      --mint:       #A8D8C8;
+      --mint-light: #D0EDE6;
+      --cream:      #FAF8F2;
+      --beige:      #F0E8D8;
+      --white:      #FFFFFF;
+      --text:       #1A1A1A;
+      --muted:      #6B6B6B;
+      --green:      #3D8B47;
+      --red:        #C0392B;
+      --red-light:  #FDF0EE;
+    }
+    body { font-family: 'Lato', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+
+    /* ── LOGIN ── */
+    #login-screen {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    .login-box {
+      background: #fff; border-radius: 20px;
+      padding: 48px 40px; max-width: 380px; width: 100%;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .login-icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .login-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem; color: var(--olive); margin-bottom: 4px;
+    }
+    .login-sub { font-size: .84rem; color: var(--muted); margin-bottom: 28px; }
+    .login-input {
+      width: 100%; padding: 14px 16px;
+      border: 2px solid #E8E8E8; border-radius: 10px;
+      font-size: 1.1rem; text-align: center;
+      letter-spacing: 4px; font-family: 'Lato', sans-serif;
+      outline: none; margin-bottom: 14px;
+      transition: border-color .2s;
+    }
+    .login-input:focus { border-color: var(--mint); }
+    .login-input.error { border-color: var(--red); animation: shake .3s; }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-6px); }
+      75%      { transform: translateX(6px); }
+    }
+    .login-btn {
+      width: 100%; padding: 13px;
+      background: var(--olive); color: #fff;
+      border: none; border-radius: 10px;
+      font-size: .9rem; font-weight: 700;
+      cursor: pointer; font-family: 'Lato', sans-serif;
+      transition: background .2s;
+    }
+    .login-btn:hover { background: var(--olive-mid); }
+    .login-err { font-size: .8rem; color: var(--red); margin-top: 10px; min-height: 18px; }
+
+    /* ── ADMIN ── */
+    #admin-screen { display: none; }
+
+    .topbar {
+      background: var(--olive);
+      color: #fff;
+      padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .topbar-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; font-style: italic;
+    }
+    .topbar-right { display: flex; align-items: center; gap: 16px; }
+    .topbar-link {
+      font-size: .78rem; color: var(--mint-light);
+      text-decoration: none; opacity: .8;
+    }
+    .topbar-link:hover { opacity: 1; }
+    .logout-btn {
+      font-size: .75rem; font-weight: 700;
+      background: rgba(255,255,255,.15); color: #fff;
+      border: none; border-radius: 6px;
+      padding: 5px 12px; cursor: pointer;
+      font-family: 'Lato', sans-serif;
+      transition: background .2s;
+    }
+    .logout-btn:hover { background: rgba(255,255,255,.25); }
+
+    .admin-main { max-width: 1000px; margin: 0 auto; padding: 32px 18px 80px; }
+
+    /* Stats cards */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      background: #fff; border-radius: 14px;
+      padding: 20px 22px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.8rem; font-weight: 400;
+      color: var(--olive); line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-label { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+    .stat-card.green .stat-num { color: var(--green); }
+    .stat-card.red   .stat-num { color: var(--red); }
+
+    /* Filters */
+    .filters {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .filter-btn {
+      padding: 7px 16px; border-radius: 20px;
+      font-size: .78rem; font-weight: 700;
+      cursor: pointer; border: 2px solid transparent;
+      font-family: 'Lato', sans-serif;
+      transition: all .2s;
+      background: var(--beige); color: var(--muted);
+    }
+    .filter-btn.active { background: var(--olive); color: #fff; }
+
+    /* Table */
+    .table-wrap { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead { background: var(--beige); }
+    th {
+      padding: 12px 16px; text-align: left;
+      font-size: .72rem; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--muted);
+    }
+    td { padding: 14px 16px; border-top: 1px solid #F0EAE0; vertical-align: middle; }
+    tr:hover td { background: #FDFBF7; }
+    tr.hidden-row { display: none; }
+
+    .td-img { width: 56px; }
+    .td-img img { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; }
+
+    .td-name { font-size: .88rem; font-weight: 700; color: var(--text); }
+    .td-cat  { font-size: .75rem; color: var(--muted); margin-top: 2px; }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 11px; border-radius: 20px;
+      font-size: .72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .5px;
+    }
+    .badge-ok   { background: #E8F5E9; color: var(--green); }
+    .badge-free { background: var(--beige); color: var(--muted); }
+
+    .td-who { font-size: .84rem; }
+    .td-who .name { font-weight: 700; color: var(--text); }
+    .td-who .date { font-size: .74rem; color: var(--muted); margin-top: 1px; }
+
+    .btn-unreserve {
+      padding: 6px 14px; border-radius: 7px;
+      font-size: .74rem; font-weight: 700;
+      background: var(--red-light); color: var(--red);
+      border: 1.5px solid #F5C0BA;
+      cursor: pointer; font-family: 'Lato', sans-serif;
+      transition: all .2s; white-space: nowrap;
+    }
+    .btn-unreserve:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
+    /* Confirm modal */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.5); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 500; padding: 20px;
+      opacity: 0; pointer-events: none; transition: opacity .25s;
+    }
+    .overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: #fff; border-radius: 18px;
+      padding: 32px 28px; max-width: 400px; width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,.2);
+      transform: scale(.96); transition: transform .25s;
+    }
+    .overlay.open .modal { transform: none; }
+    .modal-icon { font-size: 2rem; text-align: center; margin-bottom: 10px; }
+    .modal-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; color: var(--olive);
+      text-align: center; margin-bottom: 8px;
+    }
+    .modal-text { font-size: .86rem; color: var(--muted); text-align: center; line-height: 1.6; margin-bottom: 24px; }
+    .modal-text strong { color: var(--text); }
+    .modal-btns { display: flex; gap: 10px; }
+    .btn-cancel-m {
+      flex: 1; padding: 11px; border-radius: 9px;
+      border: 1.5px solid #E0E0E0; background: transparent;
+      color: var(--muted); font-family: 'Lato', sans-serif;
+      font-size: .84rem; font-weight: 700; cursor: pointer;
+    }
+    .btn-cancel-m:hover { background: var(--beige); }
+    .btn-confirm-m {
+      flex: 1.5; padding: 11px; border-radius: 9px;
+      background: var(--red); color: #fff; border: none;
+      font-family: 'Lato', sans-serif;
+      font-size: .84rem; font-weight: 700; cursor: pointer;
+    }
+    .btn-confirm-m:hover { background: #A93226; }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(70px);
+      background: var(--olive); color: #fff;
+      padding: 12px 24px; border-radius: 50px;
+      font-size: .86rem; font-weight: 500;
+      z-index: 1000; white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(0,0,0,.2);
+      transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+      pointer-events: none;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* Empty state */
+    .empty { text-align: center; padding: 48px 24px; color: var(--muted); font-size: .9rem; }
+
+    @media (max-width: 600px) {
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .stats-row .stat-card:last-child { grid-column: span 2; }
+      th:nth-child(1), td:nth-child(1) { display: none; } /* esconde coluna img */
+      .login-box { padding: 36px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-icon">🌿</div>
+    <div class="login-title">Área Admin</div>
+    <div class="login-sub">Lista de Presentes da Beatriz · 25 anos</div>
+    <input type="password" class="login-input" id="pin-input" placeholder="PIN" maxlength="10" autocomplete="off">
+    <button class="login-btn" id="login-btn">Entrar</button>
+    <div class="login-err" id="login-err"></div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin-screen">
+  <div class="topbar">
+    <div class="topbar-title">Admin · Lista da Bia 🌿</div>
+    <div class="topbar-right">
+      <a href="index.html" class="topbar-link" target="_blank">Ver lista pública ↗</a>
+      <button class="logout-btn" id="logout-btn">Sair</button>
+    </div>
+  </div>
+
+  <div class="admin-main">
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num" id="s-total">—</div>
+        <div class="stat-label">Total de presentes</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-num" id="s-reservados">—</div>
+        <div class="stat-label">Reservados</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-num" id="s-disponiveis">—</div>
+        <div class="stat-label">Disponíveis</div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+      <button class="filter-btn active" data-filter="todos">Todos</button>
+      <button class="filter-btn" data-filter="reservados">Reservados</button>
+      <button class="filter-btn" data-filter="disponiveis">Disponíveis</button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="td-img"></th>
+            <th>Presente</th>
+            <th>Status</th>
+            <th>Reservado por</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <tr><td colspan="5" class="empty">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm modal -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-icon">⚠️</div>
+    <div class="modal-title">Cancelar reserva?</div>
+    <div class="modal-text" id="modal-text"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel-m" id="btn-cancel">Voltar</button>
+      <button class="btn-confirm-m" id="btn-confirm">Sim, cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────
+// Mude o PIN para o que quiser (só você vai usar)
+const ADMIN_PIN = 'BIA25';
+
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyBLi46rjvSXk_RP30JXNkMIzj0-g7DzU74",
+  authDomain:        "lista-presentes-bia.firebaseapp.com",
+  databaseURL:       "https://lista-presentes-bia-default-rtdb.firebaseio.com",
+  projectId:         "lista-presentes-bia",
+  storageBucket:     "lista-presentes-bia.firebasestorage.app",
+  messagingSenderId: "215737786869",
+  appId:             "1:215737786869:web:7852ee636de6ca6c6380bc"
+};
+
+// ── PRODUTOS (mesma lista do index.html) ────────────
+const CATS = {
+  acessorios: 'Acessórios', beleza: 'Beleza',
+  panelas: 'Panelas & Frigideiras', utensilios: 'Utensílios',
+  copos: 'Copos & Bebidas', mesa: 'Mesa Posta',
+  temperos: 'Temperos', adega: 'Adega',
+  banheiro: 'Banheiro', lavanderia: 'Lavanderia',
+};
+
+const PRODUCTS = [
+  { id:'relogio-casio',         cat:'acessorios', name:'Relógio Casio Feminino LA670WA' },
+  { id:'mochila-nike',          cat:'acessorios', name:'Mochila Nike Heritage Unissex' },
+  { id:'bolsa-nike-tote',       cat:'acessorios', name:'Bolsa Nike Heritage Tote 2.0' },
+  { id:'paleta-oceane',         cat:'beleza',     name:'Paleta de Sombras Océane 24.1 Cores' },
+  { id:'cacarola-24',           cat:'panelas',    name:'Caçarola Tramontina LYF Verde · 24cm' },
+  { id:'cacarola-20',           cat:'panelas',    name:'Caçarola Tramontina LYF Verde Natureza · 20cm' },
+  { id:'panela-18',             cat:'panelas',    name:'Panela Tramontina LYF Verde Natureza · 18cm' },
+  { id:'frig-reta-24',          cat:'panelas',    name:'Frigideira Reta Tramontina LYF Verde · 24cm' },
+  { id:'frig-28',               cat:'panelas',    name:'Frigideira Tramontina LYF Verde · 28cm' },
+  { id:'frig-24',               cat:'panelas',    name:'Frigideira Tramontina LYF Verde · 24cm' },
+  { id:'cuscuzeira',            cat:'utensilios', name:'Cuscuzeira Tramontina Turim · 16cm' },
+  { id:'assadeiras',            cat:'utensilios', name:'Jogo Assadeiras Tramontina Brasil Rosa · 2 Peças' },
+  { id:'kit-utensilios',        cat:'utensilios', name:'Kit 10 Utensílios de Silicone' },
+  { id:'faqueiro-laguna',       cat:'utensilios', name:'Faqueiro Tramontina Laguna · 16 Peças' },
+  { id:'facas-felice',          cat:'utensilios', name:'Jogo de Facas Tramontina Felice · 5 Peças' },
+  { id:'copos-ambar',           cat:'copos',      name:'Kit 8 Copos Vidro Âmbar Canelado · 450ml' },
+  { id:'xicaras-cha',           cat:'copos',      name:'Conjunto 6 Xícaras de Chá com Pires · 200ml' },
+  { id:'bule-termico',          cat:'copos',      name:'Bule Térmico Tramontina Exata Mocha · 1L' },
+  { id:'jogo-americano',        cat:'mesa',       name:'Jogo Americano 6 Peças Redondo · Bege' },
+  { id:'porta-talheres',        cat:'mesa',       name:'Porta Talheres · Madeira e Vidro' },
+  { id:'porta-guardanapo',      cat:'mesa',       name:'Porta Guardanapo Bambu com Peso' },
+  { id:'pote-bambu',            cat:'mesa',       name:'Pote Multiuso Bambu com Colher · 19,5cm' },
+  { id:'acucareiro-meleira',    cat:'mesa',       name:'Conjunto Açucareiro + Meleira de Vidro' },
+  { id:'moedor-sal-pimenta',    cat:'mesa',       name:'Conjunto Moedor de Sal e Pimenta · 19,5cm' },
+  { id:'org-temperos',          cat:'temperos',   name:'Organizador de Temperos OU · 9 Peças' },
+  { id:'potes-hermeticos',      cat:'temperos',   name:'Kit 12 Potes Herméticos · Transparente' },
+  { id:'potes-electrolux',      cat:'temperos',   name:'Potes Herméticos Electrolux · 10 Unidades' },
+  { id:'abridor-vinho',         cat:'adega',      name:'Abridor de Vinho Elétrico Automático Electrolux' },
+  { id:'toalhas-karsten-floral',cat:'banheiro',   name:'Jogo Toalhas Karsten Floral · 4 Peças' },
+  { id:'toalhas-buddemeyer',    cat:'banheiro',   name:'Jogo Toalhas Buddemeyer Atena · 4 Peças' },
+  { id:'toalha-nuvia',          cat:'banheiro',   name:'Toalha Banhão Karsten Nuvia · 86×150cm' },
+  { id:'porta-sabonete',        cat:'banheiro',   name:'Porta Sabonete Resina Verde Celadon · 240ml' },
+  { id:'kit-lavanderia',        cat:'lavanderia', name:'Kit Lavanderia OU · 4 Peças · Flow' },
+  { id:'kit-dispenser',         cat:'lavanderia', name:'Kit Dispenser OU · 3 Peças · Flow' },
+];
+
+// ── STATE ────────────────────────────────────────────
+let db = null;
+let reservations = {};
+let pendingUnreserve = null;
+let currentFilter = 'todos';
+
+// ── LOGIN ─────────────────────────────────────────────
+const pinInput  = document.getElementById('pin-input');
+const loginBtn  = document.getElementById('login-btn');
+const loginErr  = document.getElementById('login-err');
+
+function tryLogin() {
+  if (pinInput.value.trim().toUpperCase() === ADMIN_PIN) {
+    sessionStorage.setItem('bia-admin', '1');
+    showAdmin();
+  } else {
+    pinInput.classList.add('error');
+    loginErr.textContent = 'PIN incorreto. Tente novamente.';
+    pinInput.value = '';
+    setTimeout(() => pinInput.classList.remove('error'), 600);
+  }
+}
+
+loginBtn.onclick = tryLogin;
+pinInput.onkeydown = e => { if (e.key === 'Enter') tryLogin(); };
+document.getElementById('logout-btn').onclick = () => {
+  sessionStorage.removeItem('bia-admin');
+  location.reload();
+};
+
+// ── FIREBASE ──────────────────────────────────────────
+function showAdmin() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('admin-screen').style.display = 'block';
+
+  firebase.initializeApp(FIREBASE_CONFIG);
+  db = firebase.database();
+  db.ref('reservations').on('value', snap => {
+    reservations = snap.val() || {};
+    renderTable();
+  });
+}
+
+// Se já estava logado (refresh da página)
+if (sessionStorage.getItem('bia-admin') === '1') showAdmin();
+
+// ── RENDER ────────────────────────────────────────────
+function renderTable() {
+  const total     = PRODUCTS.length;
+  const reservados = PRODUCTS.filter(p => reservations[p.id]).length;
+  const disponiveis = total - reservados;
+
+  document.getElementById('s-total').textContent      = total;
+  document.getElementById('s-reservados').textContent  = reservados;
+  document.getElementById('s-disponiveis').textContent = disponiveis;
+
+  const tbody = document.getElementById('table-body');
+  tbody.innerHTML = '';
+
+  PRODUCTS.forEach(p => {
+    const res = reservations[p.id];
+    const isRes = !!res;
+
+    // Filtro
+    if (currentFilter === 'reservados'  && !isRes) return;
+    if (currentFilter === 'disponiveis' &&  isRes) return;
+
+    const date = res ? new Date(res.ts).toLocaleDateString('pt-BR', {
+      day:'2-digit', month:'2-digit', year:'numeric',
+      hour:'2-digit', minute:'2-digit'
+    }) : '';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="td-img">
+        <img src="imgs/${p.id}.${p.id === 'facas-felice' ? 'jpeg' : 'png'}" alt="${p.name}" loading="lazy">
+      </td>
+      <td>
+        <div class="td-name">${p.name}</div>
+        <div class="td-cat">${CATS[p.cat]}</div>
+      </td>
+      <td>
+        ${isRes
+          ? '<span class="badge badge-ok">✓ Reservado</span>'
+          : '<span class="badge badge-free">Disponível</span>'
+        }
+      </td>
+      <td class="td-who">
+        ${isRes
+          ? `<div class="name">${esc(res.name)}</div><div class="date">${date}</div>`
+          : '<span style="color:var(--muted);font-size:.8rem">—</span>'
+        }
+      </td>
+      <td>
+        ${isRes
+          ? `<button class="btn-unreserve" onclick="confirmUnreserve('${p.id}','${esc(res.name)}','${esc(p.name)}')">Cancelar reserva</button>`
+          : ''
+        }
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  if (!tbody.children.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">Nenhum presente nesta categoria.</td></tr>';
+  }
+}
+
+// ── FILTERS ───────────────────────────────────────────
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderTable();
+  };
+});
+
+// ── UNRESERVE ─────────────────────────────────────────
+function confirmUnreserve(productId, reservedBy, productName) {
+  pendingUnreserve = productId;
+  document.getElementById('modal-text').innerHTML =
+    `Cancelar a reserva de <strong>${productName}</strong> feita por <strong>${reservedBy}</strong>?<br><br>O presente voltará a ficar disponível na lista.`;
+  document.getElementById('overlay').classList.add('open');
+}
+
+document.getElementById('btn-cancel').onclick = () => {
+  document.getElementById('overlay').classList.remove('open');
+  pendingUnreserve = null;
+};
+document.getElementById('overlay').onclick = e => {
+  if (e.target === document.getElementById('overlay')) {
+    document.getElementById('overlay').classList.remove('open');
+    pendingUnreserve = null;
+  }
+};
+
+document.getElementById('btn-confirm').onclick = async () => {
+  if (!pendingUnreserve) return;
+  await db.ref(`reservations/${pendingUnreserve}`).remove();
+  document.getElementById('overlay').classList.remove('open');
+  toast('✓ Reserva cancelada com sucesso!');
+  pendingUnreserve = null;
+};
+
+// ── HELPERS ───────────────────────────────────────────
+function esc(s) {
+  return String(s || '').replace(/[&<>"']/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])
+  );
+}
+
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
